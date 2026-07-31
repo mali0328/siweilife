@@ -1,0 +1,34 @@
+name: Build website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "content/**"
+      - "public/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: 取得網站程式碼
+        uses: actions/checkout@v4
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: 安裝套件
+        run: npm ci
+      - name: 產生文章資料
+        run: npm run generate:posts
+      - name: 建置網站
+        run: npm run build
